@@ -1,14 +1,138 @@
-body {
-  margin: 0;
-  padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  box-sizing: border-box;
-  background-color: #282c34;
-  color: #787a80;
+header {
+  padding: 1rem 0;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+.app{
+  margin: 0px;
+  padding: 0px;
 }
+.pageC{
+  margin: 20px;
+  padding: 20px;
+}
+
+.navbar-btn{
+  width: 35px;
+  height: 35px;
+  border-radius: 100%;
+}
+
+.product-list {
+  display: flex; /* or inline-flex */
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+.product {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  width: 16rem
+}
+.product-img{
+  padding-bottom:10px;
+  width: 100%;
+  text-align: center;
+}
+.product-price-stock{
+  float:left;
+}
+.product-price {
+  font-weight: bold;
+  font-size: 140%;
+  float: top;
+}
+.product-stock{
+  font-weight: 200;
+  font-size: 90%;
+  float:bottom;
+}
+.product-btn-parent{
+  float: right;
+}
+.product-btn{
+  padding: 0px;
+  float: right;
+  width: 100px;;
+}
+
+
+.purchase {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 100%;
+  height: 100px;
+  background-color: azure;
+  margin-bottom: 10px;
+  padding: 20px;
+}
+.purchase-img{
+  height: 100%;
+  float: right;
+}
+.purchase-info{
+  height: 100%;
+  float: left;
+}
+.purchase-qty-btn{
+  height: 30px; 
+  width: 30px;
+  float: left;
+  border-radius: 100%;
+  font-size: larger;
+  padding-top: 0px;
+}
+.checkout-btn{
+  margin: 0px;
+  margin-right: 5px;
+  width: 100px;
+}
+
+.order {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 100%;
+  background-color: azure;
+  margin-bottom: 10px;
+  padding: 20px;
+}
+.order-btn{
+  margin-left: 0px;
+  margin-right: 5px;
+  margin-top: 5px;
+  width: 80px;
+  height: 30px;
+}
+
+.pagination-btn{
+  height: 25px; 
+  width: 25px;
+  /* border-radius: 100%; */
+  color: #2757f9;
+  font-size: larger;
+  padding-top: 0px;
+  margin: 10px;
+  cursor: "pointer"
+}
+/* .pagination-btn{
+  margin-left: 0px;
+  margin-right: 5px;
+  margin-top: 5px;
+  width: 80px;
+  height: 30px;
+} */
+
+/* .abc{
+  height: 100px;
+  line-height: 100px;
+  text-align: center;
+  border: 2px dashed #f69c55;
+} */
+/* .order-list {
+
+} */
+
+/* .my-toast{
+  color: olivedrab;
+} */

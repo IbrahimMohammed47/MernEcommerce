@@ -2,8 +2,8 @@ require('dotenv').config()
 const { default: mongoose } = require('mongoose');
 const stripe = require('stripe')(process.env.STRIPE_SECRET);
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-const ProductService = require('../products/products.service.js');
-const Order = require('./orders.model.js');
+const ProductService = require('../products/service.js');
+const Order = require('./model.js');
 const service = {};
 
 const isValidQuantity = (qty) => {

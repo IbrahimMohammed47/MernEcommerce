@@ -1,8 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const { auth, requiresAuth } = require('express-openid-connect');
-const productsRouter = require('./products/products.router.js');
-const ordersRouter = require('./orders/orders.router.js');
+const productsRouter = require('./products/router.js');
+const ordersRouter = require('./orders/router.js');
 
 require('dotenv').config()
 
