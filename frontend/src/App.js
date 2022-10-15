@@ -6,7 +6,6 @@ import { CartProvider } from "react-use-cart";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-
 const App = () => {
   return (
     <div className="app container-fluid">
@@ -16,7 +15,7 @@ const App = () => {
       </CartProvider>
       <ToastContainer
         position="top-right"
-        autoClose={5000}
+        autoClose={3000}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick

@@ -3,7 +3,8 @@ const router = express.Router();
 const ProductService = require('./service.js');
 
 router.get('/', async (req, res) => {
-  const products = await ProductService.getProducts();
+  const page = req.query.page
+  const products = await ProductService.getProducts({},page);
   res.status(200).json(products);
 });
 

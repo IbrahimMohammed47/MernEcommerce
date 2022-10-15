@@ -2,118 +2,84 @@ import React, { Component } from 'react';
 import Order from './Order';
 import { BsFillArrowRightCircleFill, BsFillArrowLeftCircleFill } from "react-icons/bs";
 
+import httpClient from '../../httpClient'
+import { toast } from 'react-toastify';
+import { Form } from 'react-bootstrap';
 class OrderList extends Component {
-  
-  
+    
   constructor(props){
     super(props);
-    this.state = {page: 1}
+    this.state = {perPage: 10, page: 0, orders:[]}
+
+    this.removeOrder = this.removeOrder.bind(this)
   }
+
+  removeOrder(id){
+    let ordersCopy = [...this.state.orders]; // make a separate copy of the array
+    var index = ordersCopy.findIndex(o=>o._id === id)
+    if (index !== -1) {
+      ordersCopy.splice(index, 1);
+      this.setState({orders: ordersCopy});
+    }
+  }
+
+  getOrders(page=0, status=null){
+      if(page < 0 || (page > this.state.page && this.state.orders.length < this.state.perPage)){
+        toast.warn("No more pages that way");
+        return
+      }
+      const getOrdsPromise = this.props
+      .getToken()
+      .then(token=>{
+        return httpClient
+        .authorized(token)
+        .get("/api/orders", { params: { page, status } })
+        .then(res=>{
+          this.setState({
+            // res.data.sort((o1,o2)=>o1.createdAt < o2.createdAt
+            orders: res.data,
+            page
+          });
+        })
+        .catch(err => {
+          console.log(err.response);
+        })
+      })
+      toast.promise(
+        getOrdsPromise,
+        {pending: 'fetching orders...'}
+      )    
   
-  getOrders(){
-      const orders = [
-        {
-          "_id": "634314a328ea41016dda8352",
-          "userId": "dev|1234567",
-          "purchases": [
-            {
-              "qty": 1,
-              "name": "juice",
-              "currPrice": 3250,
-              "currStock": 1,
-              "product": "6341259f1f92b59e4110ad0e",
-              "_id": "634314a328ea41016dda8353"
-            },
-            {
-              "qty": 2,
-              "name": "icecream",
-              "currPrice": 1550,
-              "currStock": 1,
-              "product": "63412d610d8c0edcdf4d7a21",
-              "_id": "634314a328ea41016dda8354"
-            }
-          ],
-          "status": "PENDING",
-          "totalPrice": 6350,
-          "stripePaymentUrl": "https://checkout.stripe.com/c/pay/cs_test_b1hWcEPJD6hPRQWg3fNTJpfw9UL6U9oxlmJdu1kxpAXyhD076qi1hYrDYp#fidkdWxOYHwnPyd1blpxYHZxWlFqPHZgNGZ%2FMGNUaTVBUmp0S05tYkFkSTU1QkpXZn9sSEAnKSdjd2poVmB3c2B3Jz9xd3BgKSdpZHxqcHFRfHVgJz8naHBpcWxabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl",
-          "createdAt": "2022-10-09T18:36:19.478Z",
-          "updatedAt": "2022-10-09T18:36:54.063Z",
-          "__v": 0
-        },
-        {
-          "_id": "634314a328ea41016dda8389",
-          "userId": "dev|1234567",
-          "purchases": [
-            {
-              "qty": 2,
-              "name": "juice",
-              "currPrice": 3250,
-              "currStock": 1,
-              "product": "6341259f1f92b59e4110ad0e",
-              "_id": "634314a328ea41016dda8353"
-            },
-            {
-              "qty": 1,
-              "name": "icecream",
-              "currPrice": 1550,
-              "currStock": 1,
-              "product": "63412d610d8c0edcdf4d7a21",
-              "_id": "634314a328ea41016dda8354"
-            }
-          ],
-          "status": "PAID",
-          "totalPrice": 7050,
-          "stripePaymentUrl": "https://checkout.stripe.com/c/pay/cs_test_b1hWcEPJD6hPRQWg3fNTJpfw9UL6U9oxlmJdu1kxpAXyhD076qi1hYrDYp#fidkdWxOYHwnPyd1blpxYHZxWlFqPHZgNGZ%2FMGNUaTVBUmp0S05tYkFkSTU1QkpXZn9sSEAnKSdjd2poVmB3c2B3Jz9xd3BgKSdpZHxqcHFRfHVgJz8naHBpcWxabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl",
-          "createdAt": "2022-10-09T18:36:19.478Z",
-          "updatedAt": "2022-10-09T18:36:54.063Z",
-          "__v": 0
-        },
-        {
-          "_id": "63430b9befddd76829eedb95",
-          "userId": "dev|1234567",
-          "purchases": [
-            {
-              "qty": 1,
-              "name": "juice",
-              "currPrice": 3250,
-              "currStock": 2,
-              "product": "6341259f1f92b59e4110ad0e",
-              "_id": "63430b9befddd76829eedb96"
-            },
-            {
-              "qty": 1,
-              "name": "icecream",
-              "currPrice": 1550,
-              "currStock": 2,
-              "product": "63412d610d8c0edcdf4d7a21",
-              "_id": "63430b9befddd76829eedb97"
-            }
-          ],
-          "status": "FAILED",
-          "totalPrice": 4800,
-          "stripePaymentUrl": "https://checkout.stripe.com/c/pay/cs_test_b1D6NzKKhUkgylhAOGRQhii1QJZIdq9YzRTzNu3qw4AYFe5xEtfg04rC1a#fidkdWxOYHwnPyd1blpxYHZxWlFqPHZgNGZ%2FMGNUaTVBUmp0S05tYkFkSTU1QkpXZn9sSEAnKSdjd2poVmB3c2B3Jz9xd3BgKSdpZHxqcHFRfHVgJz8naHBpcWxabHFgaCcpJ2BrZGdpYFVpZGZgbWppYWB3dic%2FcXdwYHgl",
-          "createdAt": "2022-10-09T17:57:47.468Z",
-          "updatedAt": "2022-10-09T18:27:47.967Z",
-          "__v": 0
-        }
-      ];
-
-      return orders;
-
   }
+
+  handleStatusChange(val){
+    this.getOrders(this.state.page, val)
+  }
+
+  componentDidMount(){
+    this.getOrders();
+  }
+
   render() {
-      let orders = this.getOrders();
       return (
         <div>
+          <div className='status-selector-container'>
+            <Form.Select onChange={(e)=>this.handleStatusChange(e.target.value)}className='status-selector' aria-label="Default select example">
+              <option value="">status(all)</option>
+              <option value="FAILED">FAILED</option>
+              <option value="PAID">PAID</option>
+              <option value="PENDING">PENDING</option>
+            </Form.Select>
+          </div>
           <div className="order-list">
-              {orders.map((p, i) =>
-                  <Order key={i} order={p}/>
+              {this.state.orders.map((o) =>
+                  <Order key={o._id} order={o} getToken={this.props.getToken} removeOrder={this.removeOrder}/>
                   )}
           </div>
           <div style={{textAlign:'center'}}>
-            <BsFillArrowLeftCircleFill className='pagination-btn' onClick={()=>{}}/>
+            <BsFillArrowLeftCircleFill cursor={"pointer"} className='pagination-btn' onClick={()=>this.getOrders(this.state.page - 1)}/>
               {this.state.page}
-            <BsFillArrowRightCircleFill className='pagination-btn'onClick={()=>{}}/>       
+            <BsFillArrowRightCircleFill cursor={"pointer"} className='pagination-btn' onClick={()=>this.getOrders(this.state.page + 1)}/>       
           </div>                    
         </div>
       );

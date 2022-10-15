@@ -15,10 +15,13 @@ service.updateProduct = (filters, productUpdate, session=null) => {
       );
 }
 
-service.getProducts = (filters = {}) => {
-    return Product.find(filters);
+// service.getProducts = (filters = {}) => {
+//     return Product.find(filters);
+// }
+service.getProducts = (filters={}, page = 0) => {
+    const perPage = 20;
+    return Product.find(filters, null, {sort: {createdAt: 'desc'}, skip: page * perPage, limit: perPage})  
 }
-
 
 service.deleteProduct = (productId) => {
     return  Product.findByIdAndDelete(

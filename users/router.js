@@ -1,27 +1,24 @@
 const express = require('express');
+const { checkJwt } = require('../middleware');
 const router = express.Router();
+const authMngtClient = require('./authMngtClient.js')
 
-// router.get('/', async (req, res) => {
-//   const products = await ProductService.getProducts();
-//   res.status(200).json(products);
-// });
-
-router.patch('/:id', async (req, res) => {
+router.patch('/',checkJwt, async (req, res) => {
   try {
-    const updatedProduct = await ProductService.updateProduct({_id:req.params.id}, req.body);
-    res.status(200).json(updatedProduct);
+    const userId = req.auth.sub
+    const attrs =  {};
+    const name = req.body.name
+    if(name && typeof(name)=='string' && name.length>0){
+      attrs.name = name;
+    }
+    const updated = await authMngtClient.updateUser(
+      {id: userId},
+      attrs
+    )
+    res.status(200).json(updated);
   } catch (err) {
     res.status(500).json(err);
   }
 });
-
-// router.delete('/:id', async (req, res, next) => {
-//   try{
-//     const deletedProduct = await ProductService.deleteProduct(req.params.id);
-//     res.status(200).json(deletedProduct);
-//   } catch (err) {
-//     res.status(500).json(err);
-//   }
-// });
 
 module.exports = router;

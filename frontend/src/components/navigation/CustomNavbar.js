@@ -22,7 +22,7 @@ const CustomNavBar = () => {
                     {
                         isAuthenticated?
                         <>
-                        <Navbar.Text>Signed in as: <a href="#login">{user.nickname}</a></Navbar.Text>
+                        <Navbar.Text>Signed in as: <a href="#login">{user.name}</a></Navbar.Text>
                         <Button className='navbar-btn' onClick={() =>
                             logout({
                                 returnTo: window.location.origin,

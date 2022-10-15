@@ -5,7 +5,6 @@ const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 const ProductService = require('../products/service.js');
 const Order = require('./model.js');
 const service = {};
-
 const isValidQuantity = (qty) => {
     return Number.isInteger(qty) && qty > 0;
 }
@@ -36,8 +35,8 @@ const createStripeSession = (purchases, userId) =>{
         client_reference_id: userId,
         mode: 'payment',
         expires_at: Math.floor(Date.now() / 1000) + (3600 * (1/2)), // Configured to expire after 30 mins
-        success_url: `${process.env.BASE_URL}/api/orders/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${process.env.BASE_URL}/api/orders/checkout/cancel?session_id={CHECKOUT_SESSION_ID}`,
+        success_url: `${process.env.PUBLIC_BASE_URL}/api/orders/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${process.env.PUBLIC_BASE_URL}/api/orders/checkout/cancel?session_id={CHECKOUT_SESSION_ID}`,
     });
 
 }
@@ -49,31 +48,42 @@ const completeOrder = (stripePayment) =>{
     })
 }
 
-const cancelOrder = (stripePayment)=>{
-    const remover = (session)=> Order.findOneAndUpdate({stripePaymentId:stripePayment.id},{status:'FAILED'},{session});
-    return rollBackOrder(remover);
+const expireOrder = (stripePayment)=>{
+    try {
+        const remover = (session)=> Order.findOneAndUpdate({stripePaymentId:stripePayment.id},{status:'FAILED'},{session});
+        rollBackOrder(remover);            
+    } catch (error) {
+        if(error === 'order not found'){
+            console.log(`order with payment id ${stripePayment.id} was already cancelled by user`)
+        }
+    }
 }
 
 const rollBackOrder = async (remover) =>{  
-    let order;
-    const session = await mongoose.startSession();
-    await session.withTransaction(async (session) => {
-        try{
-            order =  await remover(session);
-            if(!order) throw 'order not found'
-            let productUpdates = order.purchases.map(p => ProductService.updateProduct(
-                {_id: p.product },
-                { $inc: { stock: p.qty } },
-                session
-            ))
-            await Promise.all(productUpdates);      
-        } catch (error) {
-            console.log(error)
-            throw error;
-        }
-    })  
-    return order            
-    
+    try {        
+        let order;
+        const session = await mongoose.startSession();
+        await session.withTransaction(async (session) => {
+            try{
+                order =  await remover(session);
+                // if(!order) throw 'order not found'
+                if(!order) return
+                let productUpdates = order.purchases.map(p => ProductService.updateProduct(
+                    {_id: p.product },
+                    { $inc: { stock: p.qty } },
+                    session
+                ))
+                await Promise.all(productUpdates);      
+            } catch (error) {
+                console.log("order rollback failed: "+ error)    
+                throw error;
+            }
+        }).catch((error)=>{
+            console.log(error);
+        })
+        return order            
+    } catch (error) {   
+    }   
 }
 
 service.createOrder = async (userId, purchases)=>{
@@ -110,7 +120,7 @@ service.createOrder = async (userId, purchases)=>{
     .catch(error=>{
         console.log(error);
         throw {message: error}
-    });
+    })
     return orderRes;
 }
 
@@ -122,7 +132,7 @@ service.handleStripeEvent = async (request)=>{
     
     switch (event.type) {
         case 'payment_intent.canceled':  //expired
-            cancelOrder(payment)
+            expireOrder(payment)
         break;
         case 'payment_intent.succeeded': //succeded
             completeOrder(payment)
@@ -133,12 +143,12 @@ service.handleStripeEvent = async (request)=>{
     
 }
 
-service.deleteOrder = (orderId)=>{
-    const remover = (session)=> Order.findOneAndDelete({_id:orderId, status:'PENDING'}, {session});
+service.deleteOrder = (orderId, userId)=>{
+    const remover = (session)=> Order.findOneAndDelete({_id:orderId, userId, status:'PENDING'}, {session});
     return rollBackOrder(remover);
 }
-service.getUserOrders = (filters, page) => {
-    const perPage = 20;
+service.getUserOrders = (filters = {}, page = 0) => {
+    const perPage = 10;
     return Order.find(filters, '-stripePaymentId', {sort: {createdAt: 'desc'}, skip: page * perPage, limit: perPage})  
 }
 

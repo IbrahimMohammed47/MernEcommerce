@@ -1,8 +1,10 @@
 const express = require('express');
+const cors = require('cors')
 const mongoose = require('mongoose');
-const { auth, requiresAuth } = require('express-openid-connect');
+// const { auth, requiresAuth } = require('express-openid-connect');
 const productsRouter = require('./products/router.js');
 const ordersRouter = require('./orders/router.js');
+const usersRouter = require('./users/router.js');
 
 require('dotenv').config()
 
@@ -17,34 +19,36 @@ async function main() {
   app.get('/',(req,res)=>{
     res.send("MERN E-COMMERCE")
   })
+
+  app.use(cors());
+    
   app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    next();
-  });
-  
-  app.use((req, res, next) => {
     if (req.originalUrl === '/api/orders/stripe_webhook') {
       next();
     } else {
       express.json()(req, res, next);
     }
   });
-  // app.use(express.json());
-  
-  app.use(auth({
-    authRequired: false, 
-    auth0Logout: true,
-    clientID: process.env.AUTH0_CLIENT_ID,
-    secret: process.env.AUTH0_SECRET,
-    baseURL: process.env.BASE_URL,
-    issuerBaseURL: process.env.AUTH0_SERVER,
-  }));
 
-
-  // app.use('/api/products', requiresAuth(),productsRouter);
   app.use('/api/products',productsRouter);
   app.use('/api/orders',ordersRouter);
+  app.use('/api/users',usersRouter);
+
+  app.use((err, req, res, next)=> {
+    console.log(err)
+    switch(err.name){
+      case 'UnauthorizedError':
+        res.status(401).send(`unauthorized: ${err.code}`); break;
+
+      default:
+        res.status(500).send('internal server error');
+    }
+
+  });
+
+
   
   // app.get('/tmp', (req,res)=>{
   //   console.log(req.headers)
@@ -52,10 +56,10 @@ async function main() {
   //   res.send('ok');
   // })
 
-  app.use((err, req, res, next) => {
-    console.log(err);
-    next();
-  });
+  // app.use((err, req, res, next) => {
+  //   console.log(err);
+  //   next();
+  // });
 
   app.listen(port, () => {
     console.log(`Server running on port ${port}`);
