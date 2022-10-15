@@ -21,7 +21,6 @@ const Auth0ProviderWithConfig = ({ children }) => {
       clientId={clientId}
       redirectUri={window.location.origin}
       audience={audience}
-      // redirectUri='http://localhost:3000/profile'
       useRefreshTokens
       cacheLocation="localstorage"
       // onRedirectCallback={onRedirectCallback}

@@ -6,17 +6,17 @@ import Navbar from 'react-bootstrap/Navbar';
 import { useAuth0 } from '@auth0/auth0-react';
 import {BiLogInCircle, BiLogOutCircle} from 'react-icons/bi'
 const CustomNavBar = () => {
-    const baseUrl = process.env.REACT_APP_BASE_URL;
+    // const baseUrl = process.env.REACT_APP_BASE_URL;
     const { loginWithRedirect, logout, isAuthenticated, user } = useAuth0();
     return (
         <Navbar bg="primary" variant="dark">
             <Container>
                 <Navbar.Brand href="#home">MERN E-COMMERCE</Navbar.Brand>
                 <Nav className="me-auto">
-                    <Nav.Link href={baseUrl}>Shop</Nav.Link>
-                    <Nav.Link href={`${baseUrl}/cart`}>Cart</Nav.Link>
-                    <Nav.Link href={`${baseUrl}/orders`}>Orders</Nav.Link>
-                    <Nav.Link href={`${baseUrl}/profile`}>Profile</Nav.Link>
+                    <Nav.Link href={'/'}>Shop</Nav.Link>
+                    <Nav.Link href={`/cart`}>Cart</Nav.Link>
+                    <Nav.Link href={`/orders`}>Orders</Nav.Link>
+                    <Nav.Link href={`/profile`}>Profile</Nav.Link>
                 </Nav>
                 <Navbar.Collapse className="justify-content-end">
                     {

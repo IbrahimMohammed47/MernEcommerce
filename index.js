@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors')
+const path = require('path')
 const mongoose = require('mongoose');
 // const { auth, requiresAuth } = require('express-openid-connect');
 const productsRouter = require('./products/router.js');
@@ -15,6 +16,8 @@ async function main() {
   
   const app = express();
   const port = process.env.PORT || 5000;
+
+  app.use(express.static(path.join(__dirname, 'frontend', 'build')));
 
   app.get('/',(req,res)=>{
     res.send("MERN E-COMMERCE")
@@ -48,18 +51,10 @@ async function main() {
 
   });
 
-
-  
-  // app.get('/tmp', (req,res)=>{
-  //   console.log(req.headers)
-  //   console.log(req.oidc.user);
-  //   res.send('ok');
-  // })
-
-  // app.use((err, req, res, next) => {
-  //   console.log(err);
-  //   next();
-  // });
+  app.get('*', (req, res) => {
+    // res.sendFile(path.join(__dirname+'/client/build/index.html'));
+    res.sendFile(path.join(__dirname, 'frontend', 'build', 'index.html'));
+  });
 
   app.listen(port, () => {
     console.log(`Server running on port ${port}`);
