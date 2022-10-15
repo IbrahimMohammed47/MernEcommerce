@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
+    "heroku-postbuild": "cd frontend && npm install && npm run build",
     "start-watch": "nodemon index.js",
     "dev": "concurrently --kill-others \"npm run start-watch\" \"cd frontend && npm start\""
   },
