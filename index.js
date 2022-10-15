@@ -19,10 +19,6 @@ async function main() {
 
   app.use(express.static(path.join(__dirname, 'frontend', 'build')));
 
-  app.get('/',(req,res)=>{
-    res.send("MERN E-COMMERCE")
-  })
-
   app.use(cors());
     
   app.use((req, res, next) => {
