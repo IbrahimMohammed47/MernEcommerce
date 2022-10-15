@@ -1,1 +1,0 @@
-- Signed JWT tokens cannot be tampered with without invalidating the signature. This allows the resource server (API) to be confident that the request from the client is legitimate, and the user’s permissions are accurate.
