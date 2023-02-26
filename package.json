@@ -10,6 +10,9 @@
     "start-watch": "nodemon index.js",
     "dev": "concurrently --kill-others \"npm run start-watch\" \"cd frontend && npm start\""
   },
+  "engines": {
+    "node": "16.18.1"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
